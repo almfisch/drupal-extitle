@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Extitle\n"
+"POT-Creation-Date: 2010-04-26 22:00+0200\n"
+"PO-Revision-Date: 2010-04-26 22:00+0200\n"
+"Last-Translator: Andi Platen <info@wireframe.de>\n"
+"Language-Team: Andi Platen <info@wireframe.de>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+
+#: /html/drupal_bookmark_service/admin/settings/extitle
+msgid "Extitle configuration"
+msgstr "Extitle Konfiguration"

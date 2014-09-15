@@ -1,0 +1,6 @@
+name = Extitle
+description = Get External PageTitle For Link Field via AJAX
+dependencies[] = content
+dependencies[] = link
+package = CCK
+core = 6.x

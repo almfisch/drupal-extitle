@@ -1,0 +1,94 @@
+<?php
+
+function extitle_form_alter(&$form, $form_state, $form_id)
+{
+	if($form_id == variable_get('node_type', NULL) . '_node_form')
+	{
+		$form['title']['#attributes'] = array('class' => 'form-text required');
+
+		drupal_add_js(drupal_get_path('module', 'extitle'). '/extitle.js');
+		drupal_add_js(array(
+    		'extitle' => array(
+        		'ajaxUrl' => url('getitle', array('absolute' => TRUE)),
+        		'linkFieldName' => variable_get('link_field_name', NULL),
+        		'titleFieldName' => variable_get('title_field_name', NULL)
+       		),
+   	 	), 'setting');
+    }
+}
+
+function extitle_menu()
+{
+	$items['getitle'] = array(
+		'path' => 'getitle',
+   	 	'page callback' => 'extitle_getitle',
+    	'access arguments' => array(true),
+    	'access callback' => TRUE,
+    	'type' => MENU_CALLBACK
+	);
+	$items['admin/settings/extitle'] = array(
+    	'title' => 'Extitle configuration',
+    	'description' => 'Configure the Node-Type and the Link-Field-ID.',
+    	'page callback' => 'drupal_get_form',
+    	'page arguments' => array('extitle_settings'),
+    	'access callback' => 'user_access',
+    	'access arguments' => array('administer site configuration'),
+  	);
+	return $items;
+}
+
+function extitle_getitle()
+{
+	$url = check_plain($_POST['getUrl']);
+
+	if(substr($url, 0, 7) != 'http://')
+	{
+		$url = 'http://' . $url;
+	}
+
+	if($url !== 0)
+	{
+		$url = implode('', file($url));
+		$reply = array();
+
+		if(preg_match('/<title>(.*)<\\/title>/i', $url, $title))
+		{
+			$reply['title'] = html_entity_decode($title[1], ENT_COMPAT, 'UTF-8');
+		}
+
+		print drupal_to_js($reply);
+		exit();
+	}
+}
+
+function extitle_settings()
+{
+	$node_types = array();
+	$get_types = node_get_types('names');
+	foreach($get_types as $key => $value)
+	{
+		$node_types[$key] = $key;
+	}
+
+	$form['node_type'] = array(
+    	'#type' => 'select',
+    	'#title' => t('The Node-Type'),
+    	'#default_value' => variable_get('node_type', NULL),
+    	'#options' => $node_types,
+    	'#description' => t('The name of Node-Type.'),
+  	);
+	$form['link_field_name'] = array(
+    	'#type' => 'textfield',
+    	'#title' => t('ID of the Link-Field'),
+    	'#default_value' => variable_get('link_field_name', NULL),
+    	'#description' => t('The name of the Link-Field in your form.'),
+  	);
+  	$form['title_field_name'] = array(
+    	'#type' => 'textfield',
+    	'#title' => t('ID of the Title-Field'),
+    	'#default_value' => variable_get('title_field_name', NULL),
+    	'#description' => t('The name of the Title-Field in your form.'),
+  	);
+
+	return system_settings_form($form);
+}
